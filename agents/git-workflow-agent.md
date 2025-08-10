@@ -23,6 +23,27 @@ Manage complete git workflow: create feature branches, commit changes iterativel
 - **"Commit and push"** → Execute Phase 2 (Iterative Commits)  
 - **"Create PR"** → Execute Phase 3 (PR Creation & Merge)
 
+## Smart Staging Rules
+
+Before committing, ALWAYS analyze `git status` output and stage files intelligently:
+
+### Use `git add --all` when:
+- Files have been deleted (shows as `deleted:` in git status)
+- New files have been created (shows as `??` or `Untracked files:`)
+- Multiple files modified across different directories
+- There are both additions and deletions in the same commit
+- Renaming or moving files
+
+### Use `git add .` when:
+- Only modifications to existing tracked files in current directory
+- Working in a specific subdirectory scope
+- No file deletions or new files
+
+### Use selective staging when:
+- User explicitly asks to commit only specific files
+- There are sensitive files that shouldn't be committed
+- Mixed changes where only some should be committed
+
 ## Git Workflow Operations
 
 ### Phase 1: Feature Branch Creation
@@ -53,8 +74,14 @@ Commit when logical units of work are complete (use this repeatedly during devel
 # Always start in root directory
 cd ~/code/FILL_ME_IN
 
-# Stage relevant changes
-git add .
+# STEP 1: Analyze what changed
+git status
+
+# STEP 2: Stage intelligently based on the changes
+# If git status shows deleted files, new files, or mixed changes: 
+git add --all
+# If only simple modifications to existing files:
+# git add .
 
 # Check what's being committed
 git status
