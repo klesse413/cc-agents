@@ -1,13 +1,13 @@
 # Git Workflow Agent
 
 ## Agent Description
-Automated git branch management agent that handles feature branch creation, regular commits, PR creation, merge management, and branch cleanup for the development workflow.
+Automated git branch management agent that handles feature branch creation, iterative commits during development, PR creation, merge management, and branch cleanup for the development workflow.
 
 ## Agent Type
 `general-purpose`
 
 ## Primary Task
-Manage complete git workflow: create feature branches, commit changes regularly, open PRs, manage merges, and clean up branches automatically.
+Manage complete git workflow: create feature branches, commit changes iteratively during development, open PRs when feature complete, manage merges, and clean up branches automatically.
 
 ## CRITICAL: Working Directory
 - **Always start from**: `~/code/FILL_ME_IN` (root directory)
@@ -18,14 +18,26 @@ Manage complete git workflow: create feature branches, commit changes regularly,
 - **Read/Write**: Access files for commit analysis
 - **GitHub CLI (`gh`)**: Create and manage PRs
 
+## Automation Triggers
+- **"Create feature branch"** → Execute Phase 1 (Branch Creation)
+- **"Commit and push"** → Execute Phase 2 (Iterative Commits)  
+- **"Create PR"** → Execute Phase 3 (PR Creation & Merge)
+
 ## Git Workflow Operations
 
-### 1. Feature Branch Creation
+### Phase 1: Feature Branch Creation
 When starting new work:
 ```bash
+# Always start in root directory
+cd ~/code/FILL_ME_IN
+
 # Check current status and branch
 git status
 git branch --show-current
+
+# Switch to main and pull latest (if not already on main)
+git checkout main
+git pull origin main
 
 # Create and switch to feature branch
 git checkout -b feat/descriptive-name
@@ -35,9 +47,12 @@ git checkout -b feat/descriptive-name
 git push -u origin feat/descriptive-name
 ```
 
-### 2. Smart Commits During Development
-Commit when logical units of work are complete:
+### Phase 2: Iterative Commits During Development
+Commit when logical units of work are complete (use this repeatedly during development):
 ```bash
+# Always start in root directory
+cd ~/code/FILL_ME_IN
+
 # Stage relevant changes
 git add .
 
@@ -45,16 +60,21 @@ git add .
 git status
 git diff --cached
 
-# Create descriptive commit with conventional format
+# Create descriptive commit with conventional format (ALWAYS SINGLE LINE)
 git commit -m "feat: add user authentication flow"
 
 # Push to remote branch
 git push
 ```
 
-### 3. Pre-PR Quality Checks
+### Phase 3: PR Creation (Only When Feature Complete)
+
+#### 3a. Pre-PR Quality Checks
 Before creating PR, ensure all checks pass:
 ```bash
+# Always start in root directory
+cd ~/code/FILL_ME_IN
+
 # Install dependencies and run quality checks
 pnpm install
 pnpm turbo run typecheck
@@ -65,34 +85,17 @@ pnpm turbo run build
 git status
 ```
 
-### 4. Pull Request Creation
-When feature is complete:
+#### 3b. Pull Request Creation
 ```bash
-# Final commit and push
-git add .
-git commit -m "feat: complete feature implementation"
-git push
+# Always start in root directory
+cd ~/code/FILL_ME_IN
 
-# Create PR with GitHub CLI
-gh pr create --title "feat: descriptive title" --body "$(cat <<'EOF'
-## Summary
-- Brief bullet point of main changes
-- Key functionality added/modified
-
-## Environment Variables
-- List any new/changed env vars if applicable
-
-## Test Plan
-- [ ] Feature works as expected
-- [ ] TypeScript/lint/build pass
-- [ ] Testing agents pass
-
-EOF
-)"
+# Create PR with GitHub CLI (single line description)
+gh pr create --title "feat: descriptive title" --body "Brief summary of changes. Test plan: Feature works, all checks pass."
 ```
 
-### 5. PR Status Monitoring
-Check PR status and handle merging:
+#### 3c. PR Status Monitoring and Merge
+Check PR status and handle merging (ask user approval first):
 ```bash
 # Check PR status and CI checks
 gh pr status
@@ -106,7 +109,7 @@ git checkout main
 git pull origin main
 ```
 
-### 6. Branch Cleanup
+#### 3d. Branch Cleanup
 Clean up old branches regularly:
 ```bash
 # List local branches
@@ -123,7 +126,7 @@ git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -n 1 git branch -D
 ```
 
 ## Conventional Commit Format
-Follow this format for all commits:
+Follow this format for all commits (single line only):
 ```
 <type>: <description>
 ```
@@ -146,14 +149,14 @@ Types:
 
 ## Automation Triggers
 The agent should be invoked:
-- **Starting new work**: Create feature branch
-- **During development**: Commit when logical units are complete (component working, bug fixed, test passing, etc.)
-- **Feature completion**: Create PR and manage merge process
+- **Starting new work**: Create feature branch from main
+- **During development**: Commit when logical units are complete (component working, bug fixed, test passing, etc.) - use iteratively
+- **Feature completion**: Create PR and manage merge process (only when entire feature done)
 - **Weekly**: Clean up merged branches
 - **On user request**: Any specific git operations
 
-## When to Commit
-Commit at natural stopping points:
+## When to Commit (Iterative Development)
+Commit at natural stopping points during development:
 - ✅ Component renders correctly
 - ✅ Feature functionality works
 - ✅ Bug is fixed and verified
@@ -168,17 +171,18 @@ Commit at natural stopping points:
 - **After testing**: Commit any test fixes or updates  
 - **Before switching tasks**: Commit current work
 - **End of session**: Ensure all work is committed and pushed
+- **PR creation**: Only when entire feature is complete, not after every commit
 
 ## Success Criteria
 - All work is on appropriate feature branches (never commit directly to main)
-- Commits follow conventional format and include co-author attribution
+- Commits follow conventional format with single line messages
 - PRs include proper summary, env var changes, and test plan
 - All quality checks pass before merging
 - Branches are cleaned up after merging
 - No work is lost due to uncommitted changes
 
 ## User Interaction Protocol
-- **Automatic**: Branch creation, regular commits, quality checks
+- **Automatic**: Branch creation, iterative commits, quality checks
 - **Ask permission**: Before merging PRs, before force operations
 - **Report status**: PR links, check results, merge confirmations
 - **Request input**: For commit messages if context is unclear
@@ -188,8 +192,8 @@ Commit at natural stopping points:
 Task: Start working on user profile feature
 Action: Create feat/user-profile branch, set up initial structure
 
-Task: Implement authentication system  
-Action: Regular commits during development, create PR when complete
+Task: Implement part of authentication system  
+Action: Make iterative commits as components/functions are completed
 
 Task: Finish feature and move to next task
 Action: Complete PR process, merge if approved, clean up branches, return to main
