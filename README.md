@@ -7,6 +7,8 @@ Created in collaboration with Claude, of course.
 
 ## Usage
 
+See CLAUDE.md for snippets to add to your project's CLAUDE.md to instruct automated usage of these subagents.
+
 ### Git Workflow Agent
 
 **Prerequisites:**
