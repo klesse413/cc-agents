@@ -19,16 +19,8 @@ See CLAUDE.md for snippets to add to your project's CLAUDE.md to instruct automa
 
 ### Testing Agents
 
-Both testing agents work with **React/Next.js** applications.
+Web, Mobile & API testing agents work well with Typescript-based applications.
 
 **Prerequisites:**
 - Update `FILL_ME_IN` in agent files with your project path
-- Set up your dev scripts: `npm run dev` or `pnpm turbo run dev`
 - Install [Playwright](https://playwright.dev/): `npm init playwright@latest`
-- Configure Browser MCP tools in Claude Code
-
-**Web Testing Agent:** Tests web applications via localhost:3000, runs Playwright tests, performance/accessibility audits.
-
-**Mobile Testing Agent:** Tests mobile apps via Expo web mode (localhost:8081/19006), mobile viewports, touch interactions.
-
-**Best for:** Full-stack TypeScript apps (Next.js, Expo, Turborepo monorepos).
